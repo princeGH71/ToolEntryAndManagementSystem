@@ -1,15 +1,16 @@
 package com.prince.ToolEntrySystem.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
 @Table(name = "tools")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
+@Getter
 public class Tool {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

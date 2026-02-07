@@ -6,12 +6,15 @@ import com.prince.ToolEntrySystem.enums.ToolType;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @Builder
 public class ToolRequestDto {
 
@@ -19,16 +22,14 @@ public class ToolRequestDto {
     private String toolName;
 
     @Enumerated(EnumType.STRING)
-    @NotBlank(message = "Tool type is required")
     private ToolType toolType;
 
     @Enumerated(EnumType.STRING)
-    @NotBlank(message = "status required")
     private ToolStatus status;
 
-    @NotBlank(message = "Quantity required")
+    @NotNull(message = "Quantity required")
     private Integer quantity;
 
-    @NotBlank(message = "Facility Id required")
+    @NotNull(message = "Facility Id required")
     private Long facilityId;
 }
