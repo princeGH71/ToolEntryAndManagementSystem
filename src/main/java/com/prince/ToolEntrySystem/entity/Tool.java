@@ -1,5 +1,7 @@
 package com.prince.ToolEntrySystem.entity;
 
+import com.prince.ToolEntrySystem.enums.ToolStatus;
+import com.prince.ToolEntrySystem.enums.ToolType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @Setter
 @Getter
-public class Tool {
+public class Tool extends AuditableEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,14 +22,14 @@ public class Tool {
     private String toolName;
 
     @Column(nullable = false)
-    private String toolType;
+    private ToolType toolType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "facility_id", nullable = false)
     private Facility facility;
 
     @Column(nullable = false)
-    private String status;
+    private ToolStatus status;
 
     @Column(nullable = false)
     private Integer quantity;
