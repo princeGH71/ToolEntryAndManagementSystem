@@ -1,9 +1,11 @@
 package com.prince.ToolEntrySystem.dto;
 
+import com.prince.ToolEntrySystem.enums.ToolStatus;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class ToolQueryParamsDto {
@@ -11,7 +13,7 @@ public class ToolQueryParamsDto {
     private Long id;
     private String toolName;
     private String toolType;
-    private String status;
+    private List<ToolStatus> statusList;
     private Long facilityId;
 
 
@@ -26,4 +28,10 @@ public class ToolQueryParamsDto {
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime updatedTo;
+
+
+    private Integer page = 0;
+    private Integer size = 10;
+    private String sortBy = "id";
+    private String sortOrder = "asc";
 }

@@ -5,6 +5,8 @@ import com.prince.ToolEntrySystem.enums.ToolStatus;
 import com.prince.ToolEntrySystem.enums.ToolType;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.List;
+
 public class ToolSpecification {
     
     public static Specification<Tool> hasToolType(ToolType toolType){
@@ -12,9 +14,11 @@ public class ToolSpecification {
                 toolType == null ? null : criteriaBuilder.equal(root.get("toolType"), toolType);
     }
     
-    public static Specification<Tool> hasStatus(ToolStatus toolStatus){
-        return (root, query, criteriaBuilder) -> 
-                toolStatus == null ? null : criteriaBuilder.equal(root.get("toolStatus"), toolStatus);
+    public static Specification<Tool> hasStatus(List<ToolStatus> statusList){
+        return (root, query, criteriaBuilder) ->
+                (statusList == null || statusList.isEmpty())
+                ? null
+                        : root.get("status").in(statusList);
     }
     
     public static Specification<Tool> hasToolName(String toolName){

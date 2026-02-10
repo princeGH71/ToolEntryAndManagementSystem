@@ -15,6 +15,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -75,18 +79,54 @@ public class ToolService {
         return responseDto;        
     }
 
+
     public List<ToolResponseDto> searchTools(ToolQueryParamsDto params) {
-        ToolType toolTypeEnum = params.getToolType() == null 
+
+        Specification<Tool> spec = buildToolSpecification(params);
+
+        List<Tool> tools = toolRepository.findAll(spec);
+
+        return tools.stream()
+                .map(tool -> {
+                    ToolResponseDto dto = modelMapper.map(tool, ToolResponseDto.class);
+                    dto.setFacilityId(tool.getFacility().getId());
+                    return dto;
+                })
+                .toList();
+    }
+    
+    
+    public Page<ToolResponseDto> searchToolsWithPagination(ToolQueryParamsDto params) {
+               
+        Specification<Tool> specs = buildToolSpecification(params);
+//        Sorting 
+        Sort sort = params.getSortOrder().equalsIgnoreCase("desc")
+                ? Sort.by(Sort.Order.desc(params.getSortBy()))
+                : Sort.by(Sort.Order.asc(params.getSortBy()));
+
+//        Pagination
+        Pageable pageable = PageRequest.of(params.getPage(), params.getSize(), sort);
+        Page<Tool> tools = toolRepository.findAll(specs, pageable);
+        
+        return tools.map(tool -> {
+            ToolResponseDto dto = modelMapper.map(tool, ToolResponseDto.class);
+            dto.setFacilityId(tool.getFacility().getId());
+            return dto;
+        });
+    }
+    
+    public Specification<Tool> buildToolSpecification(ToolQueryParamsDto params){
+        ToolType toolTypeEnum = params.getToolType() == null
                 ? null
                 : ToolType.valueOf(params.getToolType().toUpperCase());
 
-        ToolStatus toolStatusEnum = params.getStatus() == null
-                ? null
-                : ToolStatus.valueOf(params.getStatus().toUpperCase());
+//        ToolStatus toolStatusEnum = params.getStatus() == null
+//                ? null
+//                : ToolStatus.valueOf(params.getStatus().toUpperCase());
 
         Specification<Tool> specs = Specification.allOf(
                 ToolSpecification.hasToolType(toolTypeEnum),
-                ToolSpecification.hasStatus(toolStatusEnum),
+                ToolSpecification.hasStatus(params.getStatusList()),
                 ToolSpecification.hasToolName(params.getToolName()),
                 ToolSpecification.hasFacility(params.getFacilityId()),
 
@@ -95,10 +135,17 @@ public class ToolService {
                 ToolSpecification.updatedFrom(params.getUpdatedFrom()),
                 ToolSpecification.updatedTo(params.getUpdatedTo())
         );
-        
-        List<Tool> tools = toolRepository.findAll(specs);
+        return specs;
+    }
+
+    public List<ToolResponseDto> getToolByFacilityId(Long facilityId) {
+        List<Tool> tools = toolRepository.findByFacilityId(facilityId);
         return tools.stream()
-                .map(t -> modelMapper.map(t, ToolResponseDto.class))
-                .toList();
+                .map(t -> {
+                    ToolResponseDto responseDto = modelMapper.map(t, ToolResponseDto.class);
+                    responseDto.setFacilityId(t.getFacility().getId());
+                    return responseDto;
+                })
+                .toList();                
     }
 }

@@ -8,6 +8,7 @@ import com.prince.ToolEntrySystem.service.ToolService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,8 +45,14 @@ public class ToolController {
     }
     
     @GetMapping("/search")
-    public ResponseEntity<List<ToolResponseDto>> searchTools(@ModelAttribute ToolQueryParamsDto toolQueryParamsDto){
-        List<ToolResponseDto> responseDtos = toolService.searchTools(toolQueryParamsDto);
+    public ResponseEntity<Page<ToolResponseDto>> searchTools(@ModelAttribute ToolQueryParamsDto toolQueryParamsDto){
+        Page<ToolResponseDto> responseDtos = toolService.searchToolsWithPagination(toolQueryParamsDto);
+        return new ResponseEntity<>(responseDtos, HttpStatus.OK);
+    }
+    
+    @GetMapping("/facility/{facilityId}")
+    public ResponseEntity<List<ToolResponseDto>> getToolByFacilityId(@PathVariable Long facilityId){
+        List<ToolResponseDto> responseDtos = toolService.getToolByFacilityId(facilityId);
         return new ResponseEntity<>(responseDtos, HttpStatus.OK);
     }
 }
