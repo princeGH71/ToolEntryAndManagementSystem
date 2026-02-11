@@ -1,5 +1,6 @@
 package com.prince.ToolEntrySystem.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.prince.ToolEntrySystem.enums.SiteLocation;
 import com.prince.ToolEntrySystem.enums.SiteType;
 import jakarta.persistence.*;
@@ -47,7 +48,8 @@ public class Facility {
     private boolean active = true;
 
 
-    @OneToMany(mappedBy = "facility", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "facility")
+    @JsonIgnore
     private List<Tool> tools = new ArrayList<>();
 
 }

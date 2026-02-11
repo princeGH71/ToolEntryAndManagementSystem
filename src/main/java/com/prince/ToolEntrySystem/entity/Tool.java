@@ -13,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @Setter
 @Getter
-public class Tool extends AuditableEntity{
+public class Tool extends AuditableEntity   {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
